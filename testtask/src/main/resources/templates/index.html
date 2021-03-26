@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Test task</title>
+    <link th:href="@{indexIzgled.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+<div class="poruka" th:if="${message}">
+    <h2 th:text="${message}"/>
+</div>
+
+<div class="glavni">
+
+<div class="upload">
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <table>
+            <tr> <td>File to upload:</td> <td > <input type="file" name="file" /></td></tr>
+            <tr> <td></td> <td><input type="submit" value="Upload" /></td></tr>
+        </table>
+    </form>
+</div>
+
+<div class="download"  th:if="${fileNamePath}" >
+
+    <form method="get" th:action="${fileNamePath}">
+        <button class="btn" type="submit">Download!</button>
+    </form>
+    <!--<i class="fa fa-download"></i> Download-->
+
+</div>
+
+</div>
+
+</body>
+
+</html>
