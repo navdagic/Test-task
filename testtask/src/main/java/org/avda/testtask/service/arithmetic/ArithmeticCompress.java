@@ -16,7 +16,7 @@ public class ArithmeticCompress {
     public static void run(String inFilePath, String outFilePath, byte[] crcBytes) throws IOException {
 
         if(crcBytes.length != 8){
-            System.err.println("Invalid crc poslan");
+            System.err.println("Invalid crc !");
             return;
         }
 
@@ -42,7 +42,7 @@ public class ArithmeticCompress {
             compress(freqs, in, out);
         }
         catch (IOException e){
-            System.err.println("Greska u kompresiji");
+            System.err.println("Error");
         }
         finally{
             if(in != null){

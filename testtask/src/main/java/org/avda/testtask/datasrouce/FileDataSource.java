@@ -30,46 +30,45 @@ public class FileDataSource {
 
         String uploadDir = System.getProperty("user.dir") + "/src/main/resources/txtDirectory";
 
-        try {
-            Path copyLocation = Paths
-                    .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
-            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IOException("Could not store file " + file.getOriginalFilename()
-                    + ". Please try again!");
-        }
+            try {
+                Path copyLocation = Paths
+                        .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
+                Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new IOException("Could not store file " + file.getOriginalFilename()
+                        + ". Please try again!");
+            }
 
     }
-
-
 
 
     public void saveAvda(MultipartFile file) throws IOException {
 
         String uploadDir = System.getProperty("user.dir") + "/src/main/resources/avdaDirectory";
 
-        try {
-            Path copyLocation = Paths
-                    .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
-            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IOException("Could not store file " + file.getOriginalFilename()
-                    + ". Please try again!");
-        }
+            try {
+                Path copyLocation = Paths
+                        .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
+                Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new IOException("Could not store file " + file.getOriginalFilename()
+                        + ". Please try again!");
+            }
     }
 
     public Resource downloadFile(String filename) throws IOException {
 
         String uploadDirFileName = System.getProperty("user.dir") + "/src/main/resources/";
+
         String extension = FileService.fileType(filename);
         if ("avda".equals(extension)) {
-            uploadDirFileName = uploadDirFileName + "avdaDirectory/" + filename;
+            uploadDirFileName = uploadDirFileName + "txtDirectory/" + filename.replace(".avda", ".txt");
         } else if ("txt".equals(extension)) {
-            uploadDirFileName = uploadDirFileName + "txtDirectory/" + filename;
+            uploadDirFileName = uploadDirFileName + "avdaDirectory/" + filename.replace(".txt", ".avda");
         } else {
-            throw new IllegalArgumentException("Pogresna ekstenzija poslana");
+            throw new IllegalArgumentException("Extension is not txt or avda !");
         }
 
 

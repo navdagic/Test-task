@@ -24,7 +24,7 @@ public class ArithmeticDecompress {
         try{
             inStream = new FileInputStream(inputFile);
             bytesRead = inStream.read(crcBytes, 0, 8); // read first 8 bytes - CRC
-            if(bytesRead != 8) throw new IOException("Crc citanje prvih 8 byta invalid");
+            if(bytesRead != 8) throw new IOException("Crc error");
 
             // Perform file decompression
             out = new BufferedOutputStream(new FileOutputStream(outputFile));
@@ -33,7 +33,7 @@ public class ArithmeticDecompress {
             decompress(freqs, in, out);
         }
         catch (IOException e){
-            System.err.println("Greska u dekompresiji");
+            System.err.println("Error in decompression");
         }
         finally{
             if(in != null){

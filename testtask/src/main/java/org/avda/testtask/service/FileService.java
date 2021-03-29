@@ -35,43 +35,44 @@ public class  FileService {
     }
 
     public void uploadFile(MultipartFile file) throws IOException {
+        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/avdaDirectory";
         FileDetails fileDetails;
         final String extension = fileType(file.getOriginalFilename());
+
         if(extension.equals("txt")){ // compression
+
             fileDetails = new FileDetails(true, file);
             fileDataSource.saveTxt(file); // prvo spasi txt
 
             compressAndCrcAndSave(fileDetails);
+
+
         }
         else if(extension.equals("avda")){ // decompression
+
             fileDetails = new FileDetails(false, file);
             fileDataSource.saveAvda(file); // prvo spasi avda
 
             decompressAndCrcAndSave(fileDetails);
+
         }
         else throw new IOException("Extension is not .txt or .avda !");
     }
 
     private void decompressAndCrcAndSave(FileDetails fileDetails) throws IOException {
-        // *** ARITHMETIC DECOMPRESSION *** //
+
+
         byte[] sentCrc = ArithmeticDecompress.run(AVDA_DIRECTORY + File.separator + StringUtils.cleanPath(fileDetails.getMultipartFile().getOriginalFilename()),
                 TXT_DIRECTORY + File.separator + StringUtils.cleanPath(getFileNameNew(fileDetails.getMultipartFile().getOriginalFilename())));
-        // *** ARITHMETIC DECOMPRESSION *** //
 
-
-        // ** crc check ** //
         fileDetails.setCrc32(bytesToLong(sentCrc));
 
-
-        System.out.println("Procitani CRC: " + fileDetails.getCrc32());
-
         long newCrc = calculateCRC32(TXT_DIRECTORY + File.separator + StringUtils.cleanPath(getFileNameNew(fileDetails.getMultipartFile().getOriginalFilename())));
-        System.out.println("Izracunati CRC: " + newCrc);
+
 
         if(newCrc != fileDetails.getCrc32()){
-            throw new IllegalArgumentException("Crc do not match!");
+            throw new IllegalArgumentException("Crc error !");
         }
-        // ** crc check ** //
     }
 
     private long bytesToLong(byte[] b) {
@@ -84,25 +85,20 @@ public class  FileService {
     }
 
     private void compressAndCrcAndSave(FileDetails fileDetails) throws IOException {
-        //calculate crc32//
-        // get bytes from file
+
         byte[] bytes = fileDetails.getMultipartFile().getBytes();
 
         Checksum checksum = new CRC32();
 
-        // update the current checksum with the specified array of bytes
         checksum.update(bytes, 0, bytes.length);
 
-        // get the current checksum value
         final long checksumValue = checksum.getValue();
 
         fileDetails.setCrc32(checksumValue);
-        //calculate crc32//
-        // *** ARITHMETIC CODING *** //
+
         ArithmeticCompress.run(TXT_DIRECTORY + File.separator + StringUtils.cleanPath(fileDetails.getMultipartFile().getOriginalFilename()),
                 AVDA_DIRECTORY + File.separator + StringUtils.cleanPath(getFileNameNew(fileDetails.getMultipartFile().getOriginalFilename())),
                 longToBytes(fileDetails.getCrc32()));
-        // *** ARITHMETIC CODING *** //
     }
 
     private String getFileNameNew(String oldName){

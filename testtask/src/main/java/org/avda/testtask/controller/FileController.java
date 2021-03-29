@@ -30,8 +30,17 @@ public class FileController {
     @ResponseBody
     public ResponseEntity<Resource> downloadGet(@PathVariable String filename) throws IOException {
         Resource file = fileService.downloadFile(filename);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + filename + "\"")
+        String extension = FileService.fileType(filename);
+        String fileDownloadName;
+
+        if(extension.equals("txt"))
+            fileDownloadName =  filename.replace("txt","avda");
+        else
+            fileDownloadName = filename.replace("avda","txt");
+
+
+       return  ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + fileDownloadName + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(file);
     }
@@ -43,8 +52,8 @@ public class FileController {
         try{
             fileService.uploadFile(file);
             redirectAttributes.addFlashAttribute("message",
-                    "You successfully uploaded " + file.getOriginalFilename() + "!");
-            redirectAttributes.addFlashAttribute("fileNamePath", // ovaj atribut nosi filename ( koji ce se koristiti za download )
+                    "You successfully uploaded " + file.getOriginalFilename() + ".");
+            redirectAttributes.addFlashAttribute("fileNamePath",
                     "/files/" + file.getOriginalFilename());
 
         }catch(IOException ioException){
@@ -57,7 +66,7 @@ public class FileController {
 
     @GetMapping("/")
     public String showIndex(Model model) throws IOException {
-        model.addAttribute("filename", "testFileName"); // flash atributi trpaju sve, addAtributi se ponasaju kao req
+        model.addAttribute("filename", "testFileName");
         return "index";
     }
 
